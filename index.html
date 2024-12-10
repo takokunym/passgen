@@ -2,39 +2,88 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>パスワード生成ツール</title>
     <script>
-        function gencode(length, ub, un, us) {
+        function gencode(length, ub, un, us, una) {
             let characters = 'abcdefghijklmnopqrstuvwxyz';
             if (ub) characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             if (un) characters += '0123456789';
-            if (us) characters += '@-_';
+            if (us) characters += '@-_.';
             if (characters.length === 0) {
                 throw new Error('At least one character set must be included.');
             }
             let result = '';
-            for (let i = 0; i < length; i++) {
+
+            let uselength = length;
+
+            if (us)
+            {
+                uselength--;
+            }
+
+            if (una.length !== 0)
+            {
+                uselength = uselength - una.length;
+            }
+
+
+            for (let i = 0; i < uselength; i++) {
                 const randomIndex = Math.floor(Math.random() * characters.length);
                 result += characters[randomIndex];
+            }
+
+            if (una.length !== 0)
+            {
+                result = una + result;
+            }
+
+            if (us)
+            {
+                result = '@' + result;
             }
             return result;
         }
 
+
+
+
         window.onload = function() {
             const button = document.getElementById('genbtn');
+            const btn2 = document.getElementById('copy');
             const numberInput = document.getElementById('numberInput');
             const usebigcb = document.getElementById('usebig');
             const usenumcb = document.getElementById('usenum');
             const usespecb = document.getElementById('usespe');
+            const usenamcb = document.getElementById('usename');
+            const nameInp = document.getElementById('userInput');
             const textBox = document.getElementById('genedcode');
             button.addEventListener('click', function() {
                 const ic1 = usebigcb.checked;
                 const ic2 = usenumcb.checked;
                 const ic3 = usespecb.checked;
+                const ic4 = usenamcb.checked;
+                let name = "";
+                if (ic4)
+                {
+                    name = nameInp.value;
+                }   
                 const nownum = numberInput.valueAsNumber;
-                const ged = gencode(nownum, ic1, ic2, ic3);
+                const ged = gencode(nownum, ic1, ic2, ic3, name);
                 textBox.value = ged;
+            });
+            btn2.addEventListener('click', function() {
+                const tocopy = textBox.value;
+                navigator.clipboard.writeText(tocopy).then(() => {
+                    const notification = document.getElementById('copyNotification');
+                    notification.style.display = 'block';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('コピーに失敗しました: ', err);
+                });
             });
         };
     </script>
@@ -96,6 +145,13 @@
             margin: 5px 0;
         }
 
+        .rounded-box .checkbox-group input[type="text"] {
+            color: white;
+            font-size: 1em;
+            width: 94%;
+            margin: 5px 0;
+        }
+
         .rounded-box .number-group {
             display: flex;
             flex-direction: column;
@@ -115,6 +171,7 @@
             text-align: center;
         }
 
+
         .rounded-box .button-group {
             display: flex;
             justify-content: center;
@@ -129,6 +186,23 @@
             font-size: 1em;
             cursor: pointer;
             background-color: #007BFF;
+            color: white;
+        }
+
+        .rounded-box .numgro2 {
+            display: flex;
+            justify-content: center;
+            width: 90%;
+            margin: 10px 0;
+        }
+
+        .rounded-box .numgro2 button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #d80aa4;
             color: white;
         }
 
@@ -158,25 +232,43 @@
             <div class="checkbox-group">
                 <label><input type="checkbox" id="usebig"> 大文字の使用</label>
                 <label><input type="checkbox" id="usenum"> 数字の使用</label>
-                <label><input type="checkbox" id="usespe"> 特殊文字("@" "-" "_"の使用)</label>
+                <label><input type="checkbox" id="usespe"> 特殊文字("@" "-" "_" "."の使用)</label>
+                <label><input type="checkbox" id="usename"> ユーザー名を含める<input type="text" style="color: black" id="userInput"></label>
             </div>
             <div class="number-group">
                 <label> 文字数<input type="number" value="8" min="1" id="numberInput"></label>
+                
             </div>
+            
             <div class="button-group">
                 <button id="genbtn">条件に沿ってパスワードを生成</button>
             </div>
-            <p>チェックを入れているのに、<br>数字や特殊文字が含まれない場合、<br>再生成してみてください。<br>運が悪くランダムで生成するときに<br>使用されませんでした</p>
+            <div class="numgro2">
+                <button id="copy">生成されたパスワードをコピー</button>
+            </div>
+            <p id="copyNotification" style="display: none; color: lightgreen; font-weight: bold;">✅ コピーしました</p>
+            <p>チェックを入れているのに、<br>大文字や数字が含まれない場合、<br>再生成してみてください。<br>運が悪くランダムで生成するときに<br>使用されませんでした</p>
         </div>
     </div>
     <div class="footer">
-        <a href="https://github.com/takokunym" style="color: white;">
-            github
-        </a>
+        <p>
+            <a href="https://github.com/takokunym" style="color: white; text-decoration: none;">
+                github
+            </a>
+            lastupgrade : 2024/12/10
+        </p>
     </div>
     <script>
-        document.getElementById('genedcode').addEventListener('keydown', function(event) {
-          event.preventDefault();
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && (event.key === '+' || event.key === '-' || event.key === '=')) {
+                event.preventDefault();
+            }
         });
     </script>
 </body>
