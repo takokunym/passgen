@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パスワード生成ツール</title>
+    <script>
+        function gencode(length, ub, un, us) {
+            let characters = 'abcdefghijklmnopqrstuvwxyz';
+            if (ub) characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (un) characters += '0123456789';
+            if (us) characters += '@-_';
+            if (characters.length === 0) {
+                throw new Error('At least one character set must be included.');
+            }
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                result += characters[randomIndex];
+            }
+            return result;
+        }
+
+        window.onload = function() {
+            const button = document.getElementById('genbtn');
+            const numberInput = document.getElementById('numberInput');
+            const usebigcb = document.getElementById('usebig');
+            const usenumcb = document.getElementById('usenum');
+            const usespecb = document.getElementById('usespe');
+            const textBox = document.getElementById('genedcode');
+            button.addEventListener('click', function() {
+                const ic1 = usebigcb.checked;
+                const ic2 = usenumcb.checked;
+                const ic3 = usespecb.checked;
+                const nownum = numberInput.valueAsNumber;
+                const ged = gencode(nownum, ic1, ic2, ic3);
+                textBox.value = ged;
+            });
+        };
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            height: calc(100vh - 50px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('image.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .rounded-box {
+            width: 350px;
+            padding: 20px;
+            background-color: rgba(128, 128, 128, 0.8);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .rounded-box h2 {
+            color: white;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+
+        .rounded-box input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+        }
+
+        .rounded-box .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 90%;
+            margin: 10px 0;
+        }
+
+        .rounded-box .checkbox-group label {
+            color: white;
+            font-size: 1em;
+            margin: 5px 0;
+        }
+
+        .rounded-box .number-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            margin: 10px 0;
+            color: white;
+        }
+
+        .rounded-box .number-group input[type="number"] {
+            width: 92.75%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            margin: 5px 0;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .rounded-box .button-group {
+            display: flex;
+            justify-content: center;
+            width: 90%;
+            margin: 10px 0;
+        }
+
+        .rounded-box .button-group button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .rounded-box p {
+            color: white;
+            font-size: 0.9em;
+            text-align: center;
+            margin: 10px 0 0;
+        }
+
+        .footer {
+            height: 50px;
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="rounded-box">
+            <h2>パスワード生成ツール</h2>
+            <input type="text" placeholder="ここにパスワードが生成されます" id="genedcode">
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="usebig"> 大文字の使用</label>
+                <label><input type="checkbox" id="usenum"> 数字の使用</label>
+                <label><input type="checkbox" id="usespe"> 特殊文字("@" "-" "_"の使用)</label>
+            </div>
+            <div class="number-group">
+                <label> 文字数<input type="number" value="8" min="1" id="numberInput"></label>
+            </div>
+            <div class="button-group">
+                <button id="genbtn">条件に沿ってパスワードを生成</button>
+            </div>
+            <p>パスワード生成ツール</p>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 Your Company. All rights reserved.
+    </div>
+    <script>
+        document.getElementById('numberInput').addEventListener('keydown', function(event) {
+          event.preventDefault();
+        });
+        document.getElementById('genedcode').addEventListener('keydown', function(event) {
+          event.preventDefault();
+        });
+    </script>
+</body>
+</html>
